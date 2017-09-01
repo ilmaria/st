@@ -1,5 +1,7 @@
 st - simple terminal
 --------------------
+This is a fork of st.
+
 st is a simple terminal emulator for X which sucks less.
 
 
