@@ -248,16 +248,26 @@ bpress(XEvent *e)
 {
 	struct timespec now;
 	MouseShortcut *ms;
+	MouseKey *mk;
 
 	if (IS_SET(MODE_MOUSE) && !(e->xbutton.state & forceselmod)) {
 		mousereport(e);
 		return;
 	}
 
-	for (ms = mshortcuts; ms < mshortcuts + mshortcutslen; ms++) {
-		if (e->xbutton.button == ms->b
-				&& match(ms->mask, e->xbutton.state)) {
-			ttysend(ms->s, strlen(ms->s));
+	if (IS_SET(MODE_ALTSCREEN))
+		for (ms = mshortcuts; ms < mshortcuts + mshortcutslen; ms++) {
+			if (e->xbutton.button == ms->b
+					&& match(ms->mask, e->xbutton.state)) {
+				ttysend(ms->s, strlen(ms->s));
+				return;
+			}
+		}
+
+	for (mk = mkeys; mk < mkeys + mkeyslen; mk++) {
+		if (e->xbutton.button == mk->b
+				&& match(mk->mask, e->xbutton.state)) {
+			mk->func(&mk->arg);
 			return;
 		}
 	}
@@ -1159,7 +1169,7 @@ xdrawglyphfontspecs(const XftGlyphFontSpec *specs, Glyph base, int len, int x, i
 
 	/* Change basic system colors [0-7] to bright system colors [8-15] */
 	if ((base.mode & ATTR_BOLD_FAINT) == ATTR_BOLD && BETWEEN(base.fg, 0, 7))
-		fg = &dc.col[base.fg + 8];
+		fg = &dc.col[base.fg];
 
 	if (IS_SET(MODE_REVERSE)) {
 		if (fg == &dc.col[defaultfg]) {
@@ -1413,11 +1423,11 @@ drawregion(int x1, int y1, int x2, int y2)
 		term.dirty[y] = 0;
 
 		specs = term.specbuf;
-		numspecs = xmakeglyphfontspecs(specs, &term.line[y][x1], x2 - x1, x1, y);
+		numspecs = xmakeglyphfontspecs(specs, &TLINE(y)[x1], x2 - x1, x1, y);
 
 		i = ox = 0;
 		for (x = x1; x < x2 && i < numspecs; x++) {
-			new = term.line[y][x];
+			new = TLINE(y)[x];
 			if (new.mode == ATTR_WDUMMY)
 				continue;
 			if (ena_sel && selected(x, y))
@@ -1437,7 +1447,9 @@ drawregion(int x1, int y1, int x2, int y2)
 		if (i > 0)
 			xdrawglyphfontspecs(specs, base, i, ox, y);
 	}
-	xdrawcursor();
+
+	if (term.scr == 0)
+		xdrawcursor();
 }
 
 void

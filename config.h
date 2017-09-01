@@ -5,7 +5,7 @@
  *
  * font: see http://freedesktop.org/software/fontconfig/fontconfig-user.html
  */
-char font[] = "Liberation Mono:pixelsize=12:antialias=true:autohint=true";
+char font[] = "Source Code Pro:pixelsize=16:antialias=true:autohint=true";
 int borderpx = 2;
 
 /*
@@ -32,7 +32,7 @@ float chscale = 1.0;
  *
  * More advanced example: " `'\"()[]{}"
  */
-static char worddelimiters[] = " ";
+static char worddelimiters[] = " `'\"()[]{}";
 
 /* selection timeouts (in milliseconds) */
 unsigned int doubleclicktimeout = 300;
@@ -126,8 +126,8 @@ unsigned int cursorshape = 2;
  * Default columns and rows numbers
  */
 
-unsigned int cols = 80;
-unsigned int rows = 24;
+unsigned int cols = 136;
+unsigned int rows = 47;
 
 /*
  * Default colour and shape of the mouse cursor
@@ -154,8 +154,8 @@ MouseShortcut mshortcuts[] = {
 
 MouseKey mkeys[] = {
 	/* button               mask            function        argument */
-	{ Button4,              XK_NO_MOD,      kscrollup,      {.i =  1} },
-	{ Button5,              XK_NO_MOD,      kscrolldown,    {.i =  1} },
+	{ Button4,              XK_NO_MOD,      kscrollup,      {.i =  4} },
+	{ Button5,              XK_NO_MOD,      kscrolldown,    {.i =  4} },
 };
 
 /* Internal keyboard shortcuts. */
